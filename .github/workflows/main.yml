@@ -1,4 +1,4 @@
-naam: N-Central script testing + deployment pipeline
+name: N-Central script testing + deployment pipeline
 
 on:
   push:
@@ -6,27 +6,27 @@ on:
       - main
   pull_request:
 
-taken:
+jobs:
   lint-en-deploy:
-    naam: Controleer PowerShell-scripts en zet ze klaar voor N-Central
-    draait-op: windows-latest
+    name: Controleer PowerShell-scripts en zet ze klaar voor N-Central
+    runs-on: windows-latest
 
-    stappen:
-      - naam: Haal de code op (checkout)
-        gebruikt: actions/checkout@v4
+    steps:
+      - name: Haal de code op (checkout)
+        uses: actions/checkout@v4
 
-      - naam: Voer PSScriptAnalyzer uit op alle .ps1-scripts in de hoofdmap
+      - name: Voer PSScriptAnalyzer uit op alle .ps1-scripts in de hoofdmap
         shell: pwsh
-        voer uit: |
+        run: |
           $scripts = Get-ChildItem -Path . -Filter '*.ps1'
           foreach ($script in $scripts) {
               Write-Host "Analyseren van $($script.FullName)"
               Invoke-ScriptAnalyzer -Path $script.FullName -Severity Error,Warning
           }
 
-      - naam: Deploy naar N-Central (Tijdelijk, dit zal eind dit jaar aangepast worden voor een werkend deployment wanneer deze functionaliteit ondersteund wordt door N-Central)
+      - name: Deploy naar N-Central (Tijdelijk, dit zal eind dit jaar aangepast worden voor een werkend deployment wanneer deze functionaliteit ondersteund wordt door N-Central)
         shell: pwsh
-        voer uit: |
+        run: |
           Write-Host "Simuleer deployment naar N-Central..."
           $scripts = Get-ChildItem -Path . -Filter '*.ps1'
           foreach ($script in $scripts) {
