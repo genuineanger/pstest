@@ -1,4 +1,4 @@
-name: PowerShell CI/CD Pipeline
+naam: N-Central script testing + deployment pipeline
 
 on:
   push:
@@ -6,29 +6,29 @@ on:
       - main
   pull_request:
 
-jobs:
-  lint-and-deploy:
-    name: Lint PowerShell scripts and deploy to N-Central
-    runs-on: windows-latest
+taken:
+  lint-en-deploy:
+    naam: Controleer PowerShell-scripts en zet ze klaar voor N-Central
+    draait-op: windows-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    stappen:
+      - naam: Haal de code op (checkout)
+        gebruikt: actions/checkout@v4
 
-      - name: Run PSScriptAnalyzer on all .ps1 scripts in root
+      - naam: Voer PSScriptAnalyzer uit op alle .ps1-scripts in de hoofdmap
         shell: pwsh
-        run: |
+        voer uit: |
           $scripts = Get-ChildItem -Path . -Filter '*.ps1'
           foreach ($script in $scripts) {
-              Write-Host "Analyzing $($script.FullName)"
+              Write-Host "Analyseren van $($script.FullName)"
               Invoke-ScriptAnalyzer -Path $script.FullName -Severity Error,Warning
           }
 
-      - name: Deploy to N-Central (Placeholder)
+      - naam: Deploy naar N-Central (Tijdelijk, dit zal eind dit jaar aangepast worden voor een werkend deployment wanneer deze functionaliteit ondersteund wordt door N-Central)
         shell: pwsh
-        run: |
-          Write-Host "Simulating deployment to N-Central..."
+        voer uit: |
+          Write-Host "Simuleer deployment naar N-Central..."
           $scripts = Get-ChildItem -Path . -Filter '*.ps1'
           foreach ($script in $scripts) {
-              Write-Host "Would deploy $($script.FullName) to N-Central."
+              Write-Host "Zou $($script.FullName) deployen naar N-Central."
           }
