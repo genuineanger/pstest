@@ -1,0 +1,41 @@
+name: N-Central PowerShell Scripts CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-validate:
+    name: Validate & Package Scripts
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install required PowerShell modules
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          Install-Module Pester -Force -Scope CurrentUser
+
+      - name: Run PowerShell Script Analysis (linting)
+        run: |
+          Invoke-ScriptAnalyzer -Path ./scripts -Recurse -Severity Error,Warning
+
+      - name: Run Pester Tests
+        run: |
+          Invoke-Pester -Path ./tests -Output Detailed
+
+      - name: Package scripts for N-Central
+        run: |
+          Compress-Archive -Path ./scripts/* -DestinationPath ./ncentral-scripts.zip
+
+      - name: Upload script package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ncentral-scripts
+          path: ./ncentral-scripts.zip
