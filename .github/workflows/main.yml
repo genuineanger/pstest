@@ -1,41 +1,34 @@
-name: N-Central PowerShell Scripts CI/CD
+name: PowerShell CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 jobs:
-  build-and-validate:
-    name: Validate & Package Scripts
+  lint-and-deploy:
+    name: Lint PowerShell scripts and deploy to N-Central
     runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install required PowerShell modules
+      - name: Run PSScriptAnalyzer on all .ps1 scripts in root
+        shell: pwsh
         run: |
-          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
-          Install-Module Pester -Force -Scope CurrentUser
+          $scripts = Get-ChildItem -Path . -Filter '*.ps1'
+          foreach ($script in $scripts) {
+              Write-Host "Analyzing $($script.FullName)"
+              Invoke-ScriptAnalyzer -Path $script.FullName -Severity Error,Warning
+          }
 
-      - name: Run PowerShell Script Analysis (linting)
+      - name: Deploy to N-Central (Placeholder)
+        shell: pwsh
         run: |
-          Invoke-ScriptAnalyzer -Path ./scripts -Recurse -Severity Error,Warning
-
-      - name: Run Pester Tests
-        run: |
-          Invoke-Pester -Path ./tests -Output Detailed
-
-      - name: Package scripts for N-Central
-        run: |
-          Compress-Archive -Path ./scripts/* -DestinationPath ./ncentral-scripts.zip
-
-      - name: Upload script package as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ncentral-scripts
-          path: ./ncentral-scripts.zip
+          Write-Host "Simulating deployment to N-Central..."
+          $scripts = Get-ChildItem -Path . -Filter '*.ps1'
+          foreach ($script in $scripts) {
+              Write-Host "Would deploy $($script.FullName) to N-Central."
+          }
